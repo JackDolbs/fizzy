@@ -63,6 +63,23 @@ Rails.application.configure do
   config.solid_queue.connects_to = { database: { writing: :queue, reading: :queue } }
   # config.active_job.queue_name_prefix = "fizzy_production"
 
+  # Mailer configuration: use SMTP in production, driven by environment variables.
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address:              ENV.fetch("SMTP_ADDRESS", nil),
+    port:                 ENV.fetch("SMTP_PORT", 587).to_i,
+    user_name:            ENV["SMTP_USERNAME"],
+    password:             ENV["SMTP_PASSWORD"],
+    authentication:       ENV.fetch("SMTP_AUTHENTICATION", "plain").to_sym,
+    enable_starttls_auto: ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO", "true") == "true"
+  }.compact
+
+  # Host used in links inside emails (magic links) – must match your public Fizzy URL.
+  config.action_mailer.default_url_options = {
+    host:     ENV.fetch("APP_HOST", "example.com"),
+    protocol: ENV.fetch("APP_PROTOCOL", "https")
+  }
+
   config.action_mailer.perform_caching = false
 
   # Ignore bad email addresses and do not raise email delivery errors.
