@@ -1,5 +1,6 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "Fizzy <support@fizzy.do>"
+  # Allow self-hosters to configure the from address via environment variable.
+  default from: ENV.fetch("MAIL_FROM", "Fizzy <support@fizzy.do>")
 
   layout "mailer"
   append_view_path Rails.root.join("app/views/mailers")
